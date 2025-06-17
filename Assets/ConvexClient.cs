@@ -20,16 +20,37 @@ public class ConvexClient : MonoBehaviour
     public async Task<string> Query(string name, Dictionary<string, string> args) =>
         await client.Query(name, args);
 
+    public async Task<T> Query<T>(string name, Dictionary<string, string> args)
+    {
+        var result = await client.Query(name, args);
+        return JsonConvert.DeserializeObject<T>(result);
+    }
+
     public async Task<string> Mutation(string name, Dictionary<string, string> args) =>
         await client.Mutation(name, ArgsBuilder.Build(args));
 
+    public async Task<T> Mutation<T>(string name, Dictionary<string, string> args)
+    {
+        var result = await client.Mutation(name, ArgsBuilder.Build(args));
+        return JsonConvert.DeserializeObject<T>(result);
+    }
+
     public async Task<string> Action(string name, Dictionary<string, string> args) =>
         await client.Action(name, args);
+
+    public async Task<T> Action<T>(string name, Dictionary<string, string> args)
+    {
+        var result = await client.Action(name, args);
+        return JsonConvert.DeserializeObject<T>(result);
+    }
 
     public async Task SetAuth(string token) =>
         await client.SetAuth(token);
 
     public async Task<ConvexSubscriptionHandle> Subscribe(string name, Dictionary<string, string> args, ConvexQuerySubscriber subscriber) =>
+        new ConvexSubscriptionHandle(await client.Subscribe(name, args, subscriber.ToInternal()));
+
+    public async Task<ConvexSubscriptionHandle> Subscribe<T>(string name, Dictionary<string, string> args, ConvexQuerySubscriber<T> subscriber) =>
         new ConvexSubscriptionHandle(await client.Subscribe(name, args, subscriber.ToInternal()));
 }
 
@@ -60,6 +81,39 @@ public class ConvexQuerySubscriber
         value =>
         {
             _dispatcher.Enqueue(() => _onUpdate(value));
+        },
+        (message, value) => _dispatcher.Enqueue(() => _onError(message, value))
+    );
+}
+
+public class ConvexQuerySubscriber<T>
+{
+    private readonly Action<T> _onUpdate;
+    private readonly Action<string, string> _onError;
+    private readonly MainThreadDispatcher _dispatcher;
+
+    public ConvexQuerySubscriber(Action<T> onUpdate, Action<string, string> onError = null)
+    {
+        _onUpdate = onUpdate ?? throw new ArgumentNullException(nameof(onUpdate));
+        _onError = onError ?? ((message, value) => Debug.LogError($"Subscription error: {message}, value: {value}"));
+        _dispatcher = MainThreadDispatcher.Instance;
+    }
+
+    internal QuerySubscriber ToInternal() => new LambdaQuerySubscriber(
+        value =>
+        {
+            _dispatcher.Enqueue(() =>
+            {
+                try
+                {
+                    var deserializedValue = JsonConvert.DeserializeObject<T>(value);
+                    _onUpdate(deserializedValue);
+                }
+                catch (JsonException ex)
+                {
+                    _onError($"Failed to deserialize JSON to type {typeof(T).Name}: {ex.Message}", value);
+                }
+            });
         },
         (message, value) => _dispatcher.Enqueue(() => _onError(message, value))
     );

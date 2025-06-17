@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
-using uniffi.convexmobile;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,22 +8,26 @@ public class SimpleConvexDemo : MonoBehaviour
 {
 
     [SerializeField] private ConvexClient convex;
-
     [SerializeField] private TMP_InputField userNameInput;
     [SerializeField] private TMP_InputField messageInput;
     [SerializeField] private Button sendButton;
     [SerializeField] private TMP_Text messagesText;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     async void Start()
     {
         await convex.Subscribe("messages:list", new Dictionary<string, string>(),
-            new ConvexQuerySubscriber(
-                onUpdate: (data) =>
+            new ConvexQuerySubscriber<ConvexMessage[]>(
+                onUpdate: (messages) =>
                 {
-                    Debug.Log($"Received data: {data}");
-                    //const obj = JsonUtility.FromJson<Message[]>(data);
-                    messagesText.text = data;
+                    Debug.Log($"Received {messages.Length} messages");
+
+                    // Now you have strongly typed data!
+                    string displayText = "";
+                    foreach (var msg in messages)
+                    {
+                        displayText += $"[{msg.CreationDateTime:HH:mm:ss}] {msg.user}: {msg.message}\n";
+                    }
+                    messagesText.text = displayText;
                 },
                 onError: (message, value) => Debug.LogError($"Custom error: {message}, value: {value}")
             ));

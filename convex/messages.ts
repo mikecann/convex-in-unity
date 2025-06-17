@@ -12,19 +12,9 @@ export const addMessage = mutation({
   },
 });
 
-export const simple = mutation({
-  args: {},
-  handler: async (ctx, args) => {
-    return await ctx.db.insert("messages", {
-      message: "simple mutation",
-      user: "simple user",
-    });
-  },
-});
-
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("messages").collect();
+    return await ctx.db.query("messages").take(100);
   },
 });
