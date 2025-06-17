@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using uniffi.convexmobile;
 using UnityEngine;
-
-
+using Newtonsoft.Json;
 
 public class ConvexClient : MonoBehaviour
 {
@@ -22,7 +21,7 @@ public class ConvexClient : MonoBehaviour
         await client.Query(name, args);
 
     public async Task<string> Mutation(string name, Dictionary<string, string> args) =>
-        await client.Mutation(name, args);
+        await client.Mutation(name, ArgsBuilder.Build(args));
 
     public async Task<string> Action(string name, Dictionary<string, string> args) =>
         await client.Action(name, args);
@@ -124,5 +123,83 @@ public class LambdaQuerySubscriber : QuerySubscriber
     public void OnUpdate(string value)
     {
         _onUpdate(value);
+    }
+}
+
+public static class ArgsBuilder
+{
+    public static Dictionary<string, string> Build(Dictionary<string, string> record)
+    {
+        var result = new Dictionary<string, string>();
+
+        foreach (var entry in record)
+            result[entry.Key] = JsonConvert.SerializeObject(entry.Value);
+
+        return result;
+    }
+
+    public static Dictionary<string, string> Build(Dictionary<string, object?> record)
+    {
+        var result = new Dictionary<string, string>();
+
+        foreach (var entry in record)
+            result[entry.Key] = JsonConvert.SerializeObject(entry.Value);
+
+        return result;
+    }
+
+    public static Dictionary<string, string> Build(object anonymousObject)
+    {
+        var dict = new Dictionary<string, object?>();
+
+        foreach (var prop in anonymousObject.GetType().GetProperties())
+            dict[prop.Name] = prop.GetValue(anonymousObject);
+
+        return Build(dict);
+    }
+
+    public static Dictionary<string, string> Build(IEnumerable<(string Key, object? Value)> pairs)
+    {
+        var dict = new Dictionary<string, object?>();
+
+        foreach (var (key, value) in pairs)
+            dict[key] = value;
+
+        return Build(dict);
+    }
+
+    public static Dictionary<string, string> Build<T>(T value, JsonSerializerSettings? settings = null)
+    {
+        var json = JsonConvert.SerializeObject(value, settings ?? new JsonSerializerSettings());
+        return new Dictionary<string, string>
+            {
+                { typeof(T).Name, json }
+            };
+    }
+
+    public static Dictionary<string, string> Build(Dictionary<string, object> record, JsonSerializerSettings settings)
+    {
+        var result = new Dictionary<string, string>();
+
+        foreach (var entry in record)
+            result[entry.Key] = JsonConvert.SerializeObject(entry.Value, settings);
+
+        return result;
+    }
+
+    public static Dictionary<string, string> Build(string key, string value)
+    {
+        return new Dictionary<string, string>
+            {
+                { key, JsonConvert.SerializeObject(value) }
+            };
+    }
+
+    public static Dictionary<string, string> Build(string key, object value)
+    {
+        return new Dictionary<string, string>
+            {
+                { key, JsonConvert.SerializeObject(value) }
+            };
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using uniffi.convexmobile;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,6 +24,7 @@ public class SimpleConvexDemo : MonoBehaviour
                 onUpdate: (data) =>
                 {
                     Debug.Log($"Received data: {data}");
+                    //const obj = JsonUtility.FromJson<Message[]>(data);
                     messagesText.text = data;
                 },
                 onError: (message, value) => Debug.LogError($"Custom error: {message}, value: {value}")
@@ -36,12 +38,11 @@ public class SimpleConvexDemo : MonoBehaviour
     {
         try
         {
-            var args = new Dictionary<string, string>
+            await convex.Mutation("messages:addMessage", new Dictionary<string, string>
             {
                 { "message", messageInput.text },
                 { "user", userNameInput.text }
-            };
-            await convex.Mutation("messages:addMessage", args);
+            });
             messageInput.text = string.Empty;
         }
         catch (Exception e)
@@ -49,5 +50,6 @@ public class SimpleConvexDemo : MonoBehaviour
             Debug.LogError($"Error sending message: {e.Message}");
         }
     }
-}
 
+
+}
