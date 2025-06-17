@@ -27,8 +27,27 @@ public class SimpleConvexDemo : MonoBehaviour
                 },
                 onError: (message, value) => Debug.LogError($"Custom error: {message}, value: {value}")
             ));
+
+        sendButton.onClick.AddListener(HandleSend);
+        messageInput.onSubmit.AddListener(_ => HandleSend());
     }
 
-
+    private async void HandleSend()
+    {
+        try
+        {
+            var args = new Dictionary<string, string>
+            {
+                { "message", messageInput.text },
+                { "user", userNameInput.text }
+            };
+            await convex.Mutation("messages:addMessage", args);
+            messageInput.text = string.Empty;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Error sending message: {e.Message}");
+        }
+    }
 }
 
