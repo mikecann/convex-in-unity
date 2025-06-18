@@ -7,39 +7,32 @@ public class Fruit : MonoBehaviour
 {
     public ConvexClient convex;
     public string fruitId;
-    public Rigidbody rigidbody;
+    new public Rigidbody rigidbody;
 
     [SerializeField] private AudioClip popSound;
     [SerializeField] private ParticleSystem popParticlesPrefab;
     private AudioSource audioSource;
     private bool isPopped = false;
 
-    async void Awake()
+    void Awake()
     {
         rigidbody = GetComponent<Rigidbody>();
-
-        // Get or add AudioSource component
         audioSource = GetComponent<AudioSource>();
         if (audioSource != null) return;
 
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
-
-        // Particle system will be instantiated from prefab when needed
     }
 
-    async void Start()
+    void Start()
     {
         if (!convex) return;
     }
 
     void Update()
     {
-        // Alternative click detection using raycasting with new Input System
-        if (Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            CheckForMouseClick();
-        }
+        if (!Mouse.current.leftButton.wasPressedThisFrame) return;
+        CheckForMouseClick();
     }
 
     void CheckForMouseClick()
@@ -110,17 +103,14 @@ public class Fruit : MonoBehaviour
 
         // Make sure the particle system is set up correctly
         var main = particleInstance.main;
-        main.playOnAwake = false; // Ensure it doesn't auto-play
+        main.playOnAwake = false;
 
         // Force play the particle system
-        particleInstance.Stop(); // Stop any existing playback
+        particleInstance.Stop();
         particleInstance.Play();
-
 
         // Destroy the particle system after it finishes (use a longer time to be safe)
         float destroyTime = Mathf.Max(3f, main.startLifetime.constantMax + 2f);
         Destroy(particleInstance.gameObject, destroyTime);
     }
-
-    // ConfigureDefaultParticleSystem method removed - using prefab instead
 }

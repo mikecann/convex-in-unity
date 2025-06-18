@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class FruitConvexDemo : MonoBehaviour
 {
@@ -107,16 +106,9 @@ public class FruitConvexDemo : MonoBehaviour
 
     public void OnFruitDestroyed(string fruitId)
     {
-        if (activeFruits.ContainsKey(fruitId))
-        {
-            Debug.Log($"Fruit {fruitId} destroyed, removing from tracking");
-            activeFruits.Remove(fruitId);
-        }
+        if (!activeFruits.ContainsKey(fruitId)) return;
+        activeFruits.Remove(fruitId);
     }
-
-
-
-
 }
 
 [Serializable]
