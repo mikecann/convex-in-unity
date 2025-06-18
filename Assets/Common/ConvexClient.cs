@@ -257,3 +257,11 @@ public static class ArgsBuilder
             };
     }
 }
+
+public class ConvexObject
+{
+    public string _id;
+    public double _creationTime;
+
+    public DateTime CreationDateTime => DateTime.UnixEpoch.AddMilliseconds(_creationTime);
+}

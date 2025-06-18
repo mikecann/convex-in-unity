@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SimpleConvexDemo : MonoBehaviour
+public class ChatConvexDemo : MonoBehaviour
 {
 
     [SerializeField] private ConvexClient convex;
@@ -52,6 +52,11 @@ public class SimpleConvexDemo : MonoBehaviour
             Debug.LogError($"Error sending message: {e.Message}");
         }
     }
+}
 
-
+[Serializable]
+public class ConvexMessage : ConvexObject
+{
+    public string message;
+    public string user;
 }
