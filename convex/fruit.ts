@@ -15,7 +15,18 @@ export const pop = mutation({
     fruitId: v.id("fruit"),
   },
   handler: async (ctx, args) => {
+    // Delete the fruit
     await ctx.db.delete(args.fruitId);
+
+    // Update the game score
+    const game = await ctx.db.query("fruitGame").first();
+    if (game) {
+      await ctx.db.patch(game._id, {
+        numFruitPopped: game.numFruitPopped + 1,
+      });
+    }
+
+    // Spawn a new fruit after a random delay
     await ctx.scheduler.runAfter(
       Math.round(Math.random() * 1000),
       internal.fruit.spawn

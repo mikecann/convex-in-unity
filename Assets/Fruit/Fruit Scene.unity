@@ -503,6 +503,7 @@ MonoBehaviour:
   convex: {fileID: 794498195}
   fruitId: 
   rigidbody: {fileID: 0}
+  popSound: {fileID: 8300000, guid: 665ec71441b2aad4f9c55910bdb0ff98, type: 3}
 --- !u!1 &650724600
 GameObject:
   m_ObjectHideFlags: 0
@@ -907,6 +908,7 @@ MonoBehaviour:
   convex: {fileID: 794498195}
   fruitId: 
   rigidbody: {fileID: 0}
+  popSound: {fileID: 8300000, guid: 665ec71441b2aad4f9c55910bdb0ff98, type: 3}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -1545,6 +1547,7 @@ MonoBehaviour:
   convex: {fileID: 794498195}
   fruitId: 
   rigidbody: {fileID: 0}
+  popSound: {fileID: 8300000, guid: 665ec71441b2aad4f9c55910bdb0ff98, type: 3}
 --- !u!4 &1509547256 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7015006606901197991, guid: 74fee6a3efc40094cba60ff0cddb61a2, type: 3}
@@ -1565,6 +1568,7 @@ MonoBehaviour:
   convex: {fileID: 794498195}
   fruitId: 
   rigidbody: {fileID: 0}
+  popSound: {fileID: 8300000, guid: 665ec71441b2aad4f9c55910bdb0ff98, type: 3}
 --- !u!1 &1512428358
 GameObject:
   m_ObjectHideFlags: 0
@@ -1727,6 +1731,7 @@ MonoBehaviour:
   convex: {fileID: 794498195}
   fruitId: 
   rigidbody: {fileID: 0}
+  popSound: {fileID: 8300000, guid: 665ec71441b2aad4f9c55910bdb0ff98, type: 3}
 --- !u!1001 &7461382040425182929
 PrefabInstance:
   m_ObjectHideFlags: 0
