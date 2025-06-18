@@ -192,7 +192,7 @@ public static class ArgsBuilder
         return result;
     }
 
-    public static Dictionary<string, string> Build(Dictionary<string, object?> record)
+    public static Dictionary<string, string> Build(Dictionary<string, object> record)
     {
         var result = new Dictionary<string, string>();
 
@@ -204,7 +204,7 @@ public static class ArgsBuilder
 
     public static Dictionary<string, string> Build(object anonymousObject)
     {
-        var dict = new Dictionary<string, object?>();
+        var dict = new Dictionary<string, object>();
 
         foreach (var prop in anonymousObject.GetType().GetProperties())
             dict[prop.Name] = prop.GetValue(anonymousObject);
@@ -212,9 +212,9 @@ public static class ArgsBuilder
         return Build(dict);
     }
 
-    public static Dictionary<string, string> Build(IEnumerable<(string Key, object? Value)> pairs)
+    public static Dictionary<string, string> Build(IEnumerable<(string Key, object Value)> pairs)
     {
-        var dict = new Dictionary<string, object?>();
+        var dict = new Dictionary<string, object>();
 
         foreach (var (key, value) in pairs)
             dict[key] = value;
@@ -222,7 +222,7 @@ public static class ArgsBuilder
         return Build(dict);
     }
 
-    public static Dictionary<string, string> Build<T>(T value, JsonSerializerSettings? settings = null)
+    public static Dictionary<string, string> Build<T>(T value, JsonSerializerSettings settings = null)
     {
         var json = JsonConvert.SerializeObject(value, settings ?? new JsonSerializerSettings());
         return new Dictionary<string, string>
