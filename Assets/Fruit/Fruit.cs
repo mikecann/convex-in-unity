@@ -4,11 +4,9 @@ using UnityEngine;
 
 public class Fruit : MonoBehaviour
 {
-
     public ConvexClient convex;
     public string fruitId;
     public Rigidbody rigidbody;
-
 
     async void Awake()
     {
@@ -19,9 +17,4 @@ public class Fruit : MonoBehaviour
     {
         if (!convex) return;
     }
-
-
-
-
-
 }

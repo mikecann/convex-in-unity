@@ -20,6 +20,16 @@ export default defineSchema({
   }),
   fruit: defineTable({
     kind: v.union(...fruitKinds),
+    initialPosition: v.object({
+      x: v.number(),
+      y: v.number(),
+      z: v.number(),
+    }),
+    initialVelocity: v.object({
+      x: v.number(),
+      y: v.number(),
+      z: v.number(),
+    }),
   }),
   fruitGame: defineTable({
     numFruitPopped: v.number(),

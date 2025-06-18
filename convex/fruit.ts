@@ -28,6 +28,16 @@ export const spawn = internalMutation({
   handler: async (ctx, args) => {
     await ctx.db.insert("fruit", {
       kind: fruitKinds[Math.floor(Math.random() * fruitKinds.length)].value,
+      initialPosition: {
+        x: Math.random() * 20 - 10, // Random x between -10 and 10
+        y: Math.random() * 5 + 5, // Random y between 5 and 10 (spawn above ground)
+        z: Math.random() * 20 - 10, // Random z between -10 and 10
+      },
+      initialVelocity: {
+        x: Math.random() * 10 - 5, // Random x velocity between -5 and 5
+        y: Math.random() * 5 + 2, // Random y velocity between 2 and 7 (upward)
+        z: Math.random() * 10 - 5, // Random z velocity between -5 and 5
+      },
     });
   },
 });
